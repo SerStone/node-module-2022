@@ -16,8 +16,8 @@ const genderSwitcher =  (read, write, gender) => {
                     return console.log(err)
                 }
 
-                const user = JSON.parse(data.toString())
-                if (user.gender === gender) {
+                const person = JSON.parse(data.toString())
+                if (person.gender === gender) {
                     fs.rename(folderPath, path.join(__dirname, write, file), (err) => {
                         if (err) {
                             return console.log(err)
