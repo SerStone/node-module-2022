@@ -1,0 +1,44 @@
+[
+  {
+    "id": 3,
+    "name": "Parus",
+    "rooms": 3,
+    "price": 3700000
+  },
+  {
+    "id": 4,
+    "name": "Greenville",
+    "rooms": 2,
+    "price": 2600000
+  },
+  {
+    "id": 5,
+    "name": "Parus",
+    "rooms": 3,
+    "price": 6000000
+  },
+  {
+    "id": 6,
+    "name": "Real",
+    "rooms": 2,
+    "price": 2400000
+  },
+  {
+    "id": 7,
+    "name": "Avalon",
+    "rooms": 3,
+    "price": 3500000
+  },
+  {
+    "id": 8,
+    "name": "Avalon",
+    "rooms": 1,
+    "price": 1900000
+  },
+  {
+    "id": 9,
+    "name": "Avalon",
+    "rooms": 3,
+    "price": 2300000
+  }
+]
