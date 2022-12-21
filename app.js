@@ -1,18 +1,23 @@
 const express = require('express');
+const mongoose = require('mongoose');
 require('dotenv').config();
+mongoose.set('strictQuery', true);
 
 const userRouter = require('./router/user.router');
-const flatRouter = require('./router/flat.router');
+const carRouter = require('./router/car.router');
 const configs = require('./config/config');
 
 const app = express();
 
-
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.use('/users',userRouter);
-app.use('/flats',flatRouter);
+app.use('/users', userRouter);
+app.use('/cars', carRouter);
+
+app.get('/',(req, res) => {
+    res.json('Welcome')
+})
 
 app.use((err, req, res, next)=>{
     res.status(err.status || 500).json({
@@ -21,6 +26,7 @@ app.use((err, req, res, next)=>{
     });
 });
 
-app.listen(configs.PORT,()=>{
-    console.log(`Server is still working on ${configs.PORT} port`)
+app.listen(configs.PORT,async ()=>{
+   await mongoose.connect('mongodb://127.0.0.1/module2022');
+    console.log(`Server is still working on ${configs.PORT} port`);
 })

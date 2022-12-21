@@ -1,4 +1,4 @@
 module.exports = {
-    fileService: require('./file.service'),
-    flatFileService:require('./flat.file.service')
+    fileService: require('./user.service'),
+    carService: require('./car.service')
 };
