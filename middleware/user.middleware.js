@@ -1,13 +1,14 @@
+const User = require("../services/dataBase/User");
 const ApiError = require("../error/ApiError");
-const {fileService} = require('../services');
-const { userNormalizator } = require('../helper');
+const userValidator = require("../validator/user.validator");
+const commonValidator = require("../validator/common.validaotrs");
 
 module.exports = {
-    checkIsUserExist: async (req, res, next) => {
+    getUserDynamically: (fieldName, from = 'body', dbField = fieldName) => async (req, res, next) => {
         try {
-            const { userId } = req.params;
+            const fieldToSearch = req[from][fieldName];
 
-            const user = await fileService.findOneByParams({ _id: userId });
+            const user = await User.findOne({ [dbField]: fieldToSearch });
 
             if (!user) {
                 throw new ApiError('Inna not found', 404);
@@ -15,64 +16,7 @@ module.exports = {
 
             req.user = user;
 
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    isBodyValidCreate: (req, res, next) => {
-        try {
-            const { name, age, email } = req.body;
-
-            if (!name || name.length < 3 || typeof name !== 'string') {
-                throw new ApiError('Wrong name', 400);
-            }
-
-            if (!age  || age < 0 || Number.isNaN(+age)) {
-                throw new ApiError('Wrong age', 400);
-            }
-
-            if (!email || !email.includes('@')) {
-                throw new ApiError('Wrong email', 400);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    isBodyValidUpdate: (req, res, next) => {
-        try {
-            const { name, age, email } = req.body;
-            if (name && (name.length < 3 || typeof name !== 'string')) {
-                throw new ApiError('Wrong name', 400);
-            }
-
-            if (age && (age < 0 || Number.isNaN(+age))) {
-                throw new ApiError('Wrong age', 400);
-            }
-
-            if (email && !email.includes('@')) {
-                throw new ApiError('Wrong email', 400);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    userNormalizator: (req, res, next) => {
-        try {
-            let { name, email } = req.body;
-
-            if (name) req.body.name = userNormalizator.name(name);
-
-            if (email) req.body.email = email.toLowerCase();
-
-            next();
+            next()
         } catch (e) {
             next(e);
         }
@@ -86,7 +30,7 @@ module.exports = {
                 throw new ApiError('Email not present', 400);
             }
 
-            const user = await fileService.findOneByParams({ email });
+            const user = await User.findOne({ email });
 
             if (user) {
                 throw new ApiError('User with this email already exists', 409);
@@ -97,4 +41,52 @@ module.exports = {
             next(e);
         }
     },
+
+    isNewUserValid: async (req, res, next) => {
+        try {
+            let validate = userValidator.newUserValidator.validate(req.body);
+
+            if (validate.error) {
+                throw new ApiError(validate.error.message, 400);
+            }
+
+            req.body = validate.value;
+
+            next()
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    isEditUserValid: async (req, res, next) => {
+        try {
+            let validate = userValidator.editUserValidator.validate(req.body);
+
+            if (validate.error) {
+                throw new ApiError(validate.error.message, 400);
+            }
+
+            req.body = validate.value;
+
+            next()
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    isUserIdValid: async (req, res, next) => {
+        try {
+            const { userId } = req.params;
+
+            const validate = commonValidator.idValidator.validate(userId);
+
+            if (validate.error) {
+                throw new ApiError(validate.error.message, 400);
+            }
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    }
 }
